@@ -15,7 +15,6 @@
 #include <tf/transform_broadcaster.h>
 #include <jsk_recognition_msgs/BoundingBox.h>
 #include <std_msgs/Float32.h>
-#include <std_msgs/Float64.h>
 #include "autoku_msgs/Gnss.h"
 
 using namespace Eigen;
@@ -41,7 +40,6 @@ class ExtendedKalmanFilter{
         ros::Publisher gps_path_pub;
         ros::Publisher box_pub;
         ros::Publisher ekf_path_pub;
-        ros::Publisher yaw_bias_pub;
 
         ros::Subscriber m_gps_sub;
         ros::Subscriber m_imu_sub;
@@ -75,23 +73,19 @@ class ExtendedKalmanFilter{
 
         bool gps_input, state_init_check, measure_check;
 
-        double yaw_rate, yaw, prev_yaw, dt, yaw_bias;
+        double yaw_rate, yaw, prev_yaw, dt;
 
-        int prediction_count, gps_count, ekf_count, yaw_bias_count;
+        int prediction_count, gps_count, ekf_count;
 
         tf::TransformBroadcaster tfcaster;
 
         nav_msgs::Path gps_path, ekf_path;
-
-        std_msgs::Float64 yaw_bias_data;
 
         visualization_msgs::Marker marker;
 
         jsk_recognition_msgs::BoundingBox car_model;
 
         geometry_msgs::PoseStamped gps_pose, ekf_pose;
-
-        ros::Time previous_time, current_time;
 
         utm gps_utm;
         utm vehicle_utm;

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>state_generator</name>
+  <version>0.0.0</version>
+  <description>The state_generator package</description>
+
+  <!-- One maintainer tag required, multiple allowed, one person per tag -->
+  <maintainer email="wodud3743@gmail.com">Jaeyoung Jo</maintainer>
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <license>TODO</license>
+
+  <!-- The *depend tags are used to specify dependencies -->
+  <!-- Dependencies can be catkin packages or system dependencies -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>ublox_msgs</build_depend>
+  <build_depend>ublox_gps</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>kusv_msgs</build_depend>
+  <build_depend>autoku_msgs</build_depend>
+  <build_depend>kusv_interface</build_depend>
+  <build_depend>novatel_oem7_msgs</build_depend>
+
+  
+  <build_export_depend>cv_bridge</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>ublox_msgs</build_export_depend>
+  <build_export_depend>ublox_gps</build_export_depend>
+  <build_export_depend>message_generation</build_export_depend>
+  <build_export_depend>kusv_msgs</build_export_depend>
+  <build_export_depend>autoku_msgs</build_export_depend>
+  <build_export_depend>kusv_interface</build_export_depend>
+  <build_export_depend>novatel_oem7_msgs</build_export_depend>
+
+
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>kusv_interface</exec_depend>
+  <exec_depend>ublox_msgs</exec_depend>
+  <exec_depend>ublox_gps</exec_depend>
+  <exec_depend>message_generation</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>kusv_msgs</exec_depend>
+  <exec_depend>autoku_msgs</exec_depend>
+  <exec_depend>novatel_oem7_msgs</exec_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

@@ -11,7 +11,6 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(){
     box_pub = nh.advertise<jsk_recognition_msgs::BoundingBox>("car_model",1);
 
     m_pose_pub = nh.advertise<autoku_msgs::Gnss>("kalman_pose",100);
-    yaw_bias_pub = nh.advertise<std_msgs::Float64>("/yaw_bias",1);
 
     gps_input = false, state_init_check = false;
 }
@@ -24,10 +23,9 @@ void ExtendedKalmanFilter::init(){
 
     vehicle_utm.x = 0;
     vehicle_utm.y = 0;
+    vehicle_utm.velocity = 0.0;
 
     prev_yaw = 0;
-    yaw_bias = 0;
-    yaw_bias_count = 1;
 
     dt = 1.0 / 80;
 
@@ -79,17 +77,7 @@ void ExtendedKalmanFilter::gpsCallback(const sensor_msgs::NavSatFix::ConstPtr& m
 }
 
 void ExtendedKalmanFilter::imuCallback(const sensor_msgs::Imu::ConstPtr& msg){
-    if(vehicle_utm.velocity ==0 && yaw_bias_count < INT_MAX){
-        yaw_bias+=(msg->angular_velocity.z)/yaw_bias_count;
-        yaw_bias_count++;
-    }
-    else if(vehicle_utm.velocity <0){
-        yaw_bias = 0;
-        yaw_bias_count = 1;
-    }
-    yaw_rate = msg -> angular_velocity.z - yaw_bias;
-    yaw_bias_data.data = yaw_rate;
-    yaw_bias_pub.publish(yaw_bias_data);
+    yaw_rate = msg -> angular_velocity.z;
 }
 
 void ExtendedKalmanFilter::speedCallback(const std_msgs::Float32::ConstPtr& msg){
@@ -105,27 +93,13 @@ VectorXd ExtendedKalmanFilter::f_k(VectorXd x_post){
 }
 
 void ExtendedKalmanFilter::EKF(){
-    current_time = ros::Time::now();
-    dt = (current_time - previous_time).toSec();
-
-    if(vehicle_utm.velocity == 0){
-        Q << 0.01, 0.01, 0.01,      //값 높이면 측정값 비중 증가
-             0.01, 0.01, 0.01,
-             0.01, 0.01, 0.01;
-
-        R << 3.0, 0.0,               //값 높이면 센서값 비중 증가
-             0.0, 3.0;
-    }
-    else{
+    if(state_init_check){
         Q << 0.1, 0.0, 0.0,          //값 높이면 측정값 비중 증가
              0.0, 0.1, 0.0,
              0.0, 0.0, 0.1;
 
         R << 1.5, 0.0,               //값 높이면 센서값 비중 증가
              0.0, 1.5;
-    }
-    
-    if(state_init_check){
 
         I.setIdentity();
 
@@ -169,26 +143,25 @@ void ExtendedKalmanFilter::EKF(){
         vehicle_utm.y = x_post(1);
         vehicle_utm.yaw = x_post(2);
     }
-    previous_time = current_time;
 }
 
 void ExtendedKalmanFilter::publishPose(){
     lanelet::BasicPoint3d utm_point(vehicle_utm.x, vehicle_utm.y, 0);
     lanelet::GPSPoint gps_point = projection.reverse(utm_point);
 
-    if (vehicle_utm.yaw > M_PI){
-        vehicle_utm.yaw -= 2.0 * M_PI;
-    }
-    else if (vehicle_utm.yaw < -M_PI){
-        vehicle_utm.yaw += 2.0 * M_PI;
-    }
-
     k_pose.header.frame_id = "world";
+    k_pose.header.stamp = ros::Time::now();
 
     k_pose.latitude = gps_point.lat;
     k_pose.longitude = gps_point.lon;
 
+
+    ROS_INFO("Publish pose lat : %.8f", k_pose.latitude);
+    ROS_INFO("Publish pose lon : %.8f", k_pose.longitude);
+    
     k_pose.heading = vehicle_utm.yaw;
+
+    ROS_INFO("KALMAN POSE HEADING : %.8f", k_pose.heading);
 
     m_pose_pub.publish(k_pose);
 }

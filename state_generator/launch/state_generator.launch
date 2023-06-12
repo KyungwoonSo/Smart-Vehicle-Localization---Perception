@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="mode" default="pwrpakINS"/>
+    <node pkg="state_generator" type="state_generator" name="state_generator" output="screen">
+        <param name="mode" value="$(arg mode)"/>
+    </node>
+</launch>
